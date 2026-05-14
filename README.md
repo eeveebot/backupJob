@@ -46,6 +46,12 @@ command: ["/usr/local/bin/restore.sh"]
 <prefix>/<namespace>/<moduleName>/<uuid>.tar.gz
 ```
 
+## Security
+
+- S3 credentials are written to a temporary `.s3cfg` file with `chmod 600` to prevent other processes from reading them
+- The `.s3cfg` file is deleted after the backup/restore operation completes
+- Both `backup.sh` and `restore.sh` verify the s3cmd upload/download succeeded before continuing (exit with error on failure)
+
 ## License
 
 [CC BY-NC-SA 4.0](LICENSE)
