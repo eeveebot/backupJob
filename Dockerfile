@@ -1,6 +1,7 @@
 FROM docker.io/alpine:3
 
 RUN set -exu \
+  # coreutils provides uuidgen used by backup.sh
   && apk add \
     --no-cache \
     bash \

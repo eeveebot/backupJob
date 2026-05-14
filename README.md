@@ -31,9 +31,11 @@ command: ["/usr/local/bin/restore.sh"]
 | `S3_ACCESS_ID` | yes | Access key ID (from Secret) |
 | `S3_SECRET_KEY` | yes | Secret access key (from Secret) |
 | `S3_PATH_STYLE` | no | Set `true` for path-style addressing (MinIO, etc.) |
+| `S3_SIGNATURE_V2` | no | Set `true` to use S3 v2 signatures (Ceph RADOSGW, etc.) |
 | `BACKUP_NAMESPACE` | yes (backup) | Bot instance namespace |
 | `BACKUP_MODULE` | yes (backup) | Module name |
 | `BACKUP_PVC_PATH` | no | PVC mount path (default: `/data`) |
+| `RESTORE_CLEAN` | no | Set `true` to delete all existing data in the PVC before extracting the backup (default: `false`) |
 | `RESTORE_NAMESPACE` | yes (restore) | Bot instance namespace |
 | `RESTORE_MODULE` | yes (restore) | Module name |
 | `RESTORE_BACKUP_ID` | yes (restore) | UUID of the backup to restore |

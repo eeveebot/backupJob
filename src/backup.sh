@@ -8,6 +8,7 @@ S3_PREFIX="${S3_PREFIX:-}"
 S3_ACCESS_ID="${S3_ACCESS_ID:?S3_ACCESS_ID is required}"
 S3_SECRET_KEY="${S3_SECRET_KEY:?S3_SECRET_KEY is required}"
 S3_PATH_STYLE="${S3_PATH_STYLE:-false}"
+S3_SIGNATURE_V2="${S3_SIGNATURE_V2:-false}"
 BACKUP_NAMESPACE="${BACKUP_NAMESPACE:?BACKUP_NAMESPACE is required}"
 BACKUP_MODULE="${BACKUP_MODULE:?BACKUP_MODULE is required}"
 BACKUP_PVC_PATH="${BACKUP_PVC_PATH:-/data}"
@@ -23,8 +24,10 @@ cat > /tmp/.s3cfg <<EOF
 access_key = ${S3_ACCESS_ID}
 secret_key = ${S3_SECRET_KEY}
 host_base = ${HOST_BASE}
-use_https = True
+use_https = $(if [[ "${S3_ENDPOINT}" == https://* ]]; then echo True; else echo False; fi)
+signature_v2 = $(if [[ "${S3_SIGNATURE_V2}" == "true" ]]; then echo True; else echo False; fi)
 EOF
+chmod 600 /tmp/.s3cfg
 
 if [ "${S3_PATH_STYLE}" = "true" ]; then
   echo "host_bucket = ${HOST_BASE}" >> /tmp/.s3cfg
@@ -40,6 +43,9 @@ tar -czf "${TMPFILE}" -C "${BACKUP_PVC_PATH}" .
 
 # --- Upload ---
 echo "Uploading backup ${BACKUP_UUID} to s3://${S3_BUCKET}/${S3_KEY}"
-s3cmd -c /tmp/.s3cfg put "${TMPFILE}" "s3://${S3_BUCKET}/${S3_KEY}"
+if ! s3cmd -c /tmp/.s3cfg put "${TMPFILE}" "s3://${S3_BUCKET}/${S3_KEY}"; then
+  echo "ERROR: Upload failed for backup ${BACKUP_UUID}" >&2
+  exit 1
+fi
 
 echo "Backup complete: ${BACKUP_UUID}"
