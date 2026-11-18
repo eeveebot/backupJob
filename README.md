@@ -54,4 +54,4 @@ command: ["/usr/local/bin/restore.sh"]
 
 ## License
 
-[CC BY-NC-SA 4.0](LICENSE)
+[AGPL-3.0-or-later](LICENSE)
